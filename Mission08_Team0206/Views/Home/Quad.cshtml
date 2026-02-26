@@ -4,10 +4,14 @@
     ViewData["Title"] = "Quadrants";
 }
 
+<!-- Quadrants View: Displays uncompleted tasks in a 2x2 Eisenhower Matrix grid -->
+<!-- Each quadrant shows tasks with Edit, Complete, and Delete buttons -->
 <h2 class="text-center mb-4">Task Quadrants</h2>
 
+<!-- Top row: Quadrants I and II -->
 <div class="row">
 
+    <!-- Quadrant I: Important and Urgent (Red) -->
     <div class="col-md-6 mb-4">
         <div class="card h-100 shadow-sm border-danger">
             <div class="card-header bg-danger text-white fw-bold">
@@ -41,6 +45,7 @@
         </div>
     </div>
 
+    <!-- Quadrant II: Important and Not Urgent (Yellow) -->
     <div class="col-md-6 mb-4">
         <div class="card h-100 shadow-sm border-warning">
             <div class="card-header bg-warning fw-bold">
@@ -76,8 +81,10 @@
 
 </div>
 
+<!-- Bottom row: Quadrants III and IV -->
 <div class="row">
 
+    <!-- Quadrant III: Not Important and Urgent (Blue) -->
     <div class="col-md-6 mb-4">
         <div class="card h-100 shadow-sm border-info">
             <div class="card-header bg-info text-white fw-bold">
@@ -111,6 +118,7 @@
         </div>
     </div>
 
+    <!-- Quadrant IV: Not Important and Not Urgent (Gray) -->
     <div class="col-md-6 mb-4">
         <div class="card h-100 shadow-sm border-secondary">
             <div class="card-header bg-secondary text-white fw-bold">

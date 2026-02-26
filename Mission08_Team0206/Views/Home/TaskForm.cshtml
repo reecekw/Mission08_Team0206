@@ -5,15 +5,19 @@
     ViewData["Title"] = Model.TaskItemId == 0 ? "Add Task" : "Edit Task";
 }
 
+<!-- Add/Edit Task Form: Uses Bootstrap grid layout with two columns -->
 <div class="container mt-4">
     <h2 class="mb-4">@ViewData["Title"]</h2>
 
+    <!-- Form posts to SaveTask action which handles both adding and editing -->
     <form asp-action="SaveTask" method="post" class="shadow-sm p-4 rounded bg-light">
 
+        <!-- Hidden field to track the task ID (0 for new tasks, existing ID for edits) -->
         <input type="hidden" asp-for="TaskItemId" />
 
         <div class="row">
 
+            <!-- Left column: Task description, due date, and completed checkbox -->
             <div class="col-md-6">
 
                 <div class="mb-3">
@@ -38,8 +42,10 @@
 
             </div>
 
+            <!-- Right column: Category dropdown and quadrant radio buttons -->
             <div class="col-md-6">
 
+                <!-- Category dropdown populated from the database -->
                 <div class="mb-3">
                     <label asp-for="CategoryId" class="form-label fw-bold"></label>
                     <select asp-for="CategoryId" class="form-select">
@@ -93,6 +99,7 @@
 
         </div>
 
+        <!-- Submit and Cancel buttons -->
         <div class="row mt-4">
             <div class="col">
                 <button type="submit" class="btn btn-primary px-4 shadow-sm">Save Task</button>
@@ -103,6 +110,7 @@
     </form>
 </div>
 
+<!-- Include client-side validation scripts for form validation -->
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }
