@@ -1,0 +1,135 @@
+﻿@model List<Mission08_Team0206.Models.TaskItem>
+
+@{
+    ViewData["Title"] = "Quadrants";
+}
+
+<h2 class="text-center mb-4">Task Quadrants</h2>
+
+<div class="row">
+
+    <!-- Quadrant 1 -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-danger text-white">
+                Quadrant I – Important / Urgent
+            </div>
+            <div class="card-body">
+                @foreach (var task in Model.Where(t => t.Quadrant == 1))
+                {
+                    <div class="mb-3">
+                        <strong>@task.TaskDescription</strong><br />
+                        @if (task.DueDate != null)
+                        {
+                            <small>Due: @task.DueDate.Value.ToShortDateString()</small>
+                    
+                            <br />
+                        }
+                        <small>Category: @task.Category?.CategoryName</small>
+                        <div class="mt-2">
+                            <a asp-action="Edit" asp-route-id="@task.TaskItemId" class="btn btn-sm btn-primary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@task.TaskItemId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Quadrant 2 -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-warning">
+                Quadrant II – Important / Not Urgent
+            </div>
+            <div class="card-body">
+                @foreach (var task in Model.Where(t => t.Quadrant == 2))
+                {
+                    <div class="mb-3">
+                        <strong>@task.TaskDescription</strong><br />
+                        @if (task.DueDate != null)
+                        {
+                            <small>Due: @task.DueDate.Value.ToShortDateString()</small>
+                    
+                            <br />
+                        }
+                        <small>Category: @task.Category?.CategoryName</small>
+                        <div class="mt-2">
+                            <a asp-action="Edit" asp-route-id="@task.TaskItemId" class="btn btn-sm btn-primary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@task.TaskItemId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <!-- Quadrant 3 -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                Quadrant III – Not Important / Urgent
+            </div>
+            <div class="card-body">
+                @foreach (var task in Model.Where(t => t.Quadrant == 3))
+                {
+                    <div class="mb-3">
+                        <strong>@task.TaskDescription</strong><br />
+                        @if (task.DueDate != null)
+                        {
+                            <small>Due: @task.DueDate.Value.ToShortDateString()</small>
+                    
+                            <br />
+                        }
+                        <small>Category: @task.Category?.CategoryName</small>
+                        <div class="mt-2">
+                            <a asp-action="Edit" asp-route-id="@task.TaskItemId" class="btn btn-sm btn-primary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@task.TaskItemId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Quadrant 4 -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-secondary text-white">
+                Quadrant IV – Not Important / Not Urgent
+            </div>
+            <div class="card-body">
+                @foreach (var task in Model.Where(t => t.Quadrant == 4))
+                {
+                    <div class="mb-3">
+                        <strong>@task.TaskDescription</strong><br />
+                        @if (task.DueDate != null)
+                        {
+                            <small>Due: @task.DueDate.Value.ToShortDateString()</small>
+                    
+                            <br />
+                        }
+                        <small>Category: @task.Category?.CategoryName</small>
+                        <div class="mt-2">
+                            <a asp-action="Edit" asp-route-id="@task.TaskItemId" class="btn btn-sm btn-primary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@task.TaskItemId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
