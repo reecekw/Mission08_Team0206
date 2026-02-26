@@ -35,6 +35,16 @@ namespace Mission08_Team0206.Controllers
             return View("Quad", tasks);
         }
 
+        // GET: /Home/Create – Display an empty form to add a new task
+        public IActionResult Create()
+        {
+            // Pass categories list for the dropdown
+            ViewBag.Categories = _context.Categories.ToList();
+
+            // Return the TaskForm view with a blank TaskItem (TaskItemId will be 0)
+            return View("TaskForm", new TaskItem());
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
