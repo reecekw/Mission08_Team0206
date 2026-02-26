@@ -1,111 +1,112 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Mission08_Team0206.Models;
-using System.Diagnostics;
+using Microsoft.EntityFrameworkCore; 
 
-namespace Mission08_Team0206.Controllers
+namespace Mission08_Team0206.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ITaskRepository _repo;
+
+    public HomeController(ITaskRepository temp)
     {
-        // Declare _context here
-        private readonly TaskContext _context;
+        _repo = temp;
+    }
 
-        // Constructor injects TaskContext
-        public HomeController(TaskContext context)
+    // --- HOME PAGE (Now shows ONLY Completed Tasks) ---
+    [HttpGet]
+    public IActionResult Index()
+    {
+        // Fetch ONLY completed tasks to display on the Home page
+        var completedTasks = _repo.TaskItems
+            .Include(t => t.Category) 
+            .Where(t => t.Completed == true)
+            .ToList();
+
+        return View(completedTasks);
+    }
+
+    // --- QUADRANTS MATRIX VIEW ---
+    [HttpGet]
+    public IActionResult Quad()
+    {
+        // Fetch uncompleted tasks and include the Category data for the view
+        var uncompletedTasks = _repo.TaskItems
+            .Include(t => t.Category) 
+            .Where(t => t.Completed == false)
+            .ToList();
+
+        return View(uncompletedTasks);
+    }
+
+    // --- CREATE TASK (GET) ---
+    [HttpGet]
+    public IActionResult Create() 
+    {
+        ViewBag.Categories = _repo.Categories.OrderBy(c => c.CategoryName).ToList();
+        return View("TaskForm", new TaskItem()); 
+    }
+
+    // --- EDIT TASK (GET) ---
+    [HttpGet]
+    public IActionResult Edit(int id)
+    {
+        var taskToEdit = _repo.GetTaskById(id); 
+        if (taskToEdit == null) return NotFound();
+
+        ViewBag.Categories = _repo.Categories.OrderBy(c => c.CategoryName).ToList();
+        
+        return View("TaskForm", taskToEdit);
+    }
+
+    // --- SAVE TASK (POST) - Handles both Adding and Editing ---
+    [HttpPost]
+    public IActionResult SaveTask(TaskItem task)
+    {
+        if (ModelState.IsValid)
         {
-            _context = context;
-        }
-
-        // Home page
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        // Quadrants page
-        public IActionResult Quad()
-        {
-            // Load incomplete tasks and include Category
-            var tasks = _context.TaskItems
-                .Include(t => t.Category)
-                .Where(t => !t.Completed)
-                .ToList();
-
-            // Return your Quad.cshtml view
-            return View("Quad", tasks);
-        }
-
-        // GET: /Home/Create – Display an empty form to add a new task
-        public IActionResult Create()
-        {
-            // Pass categories list for the dropdown
-            ViewBag.Categories = _context.Categories.ToList();
-
-            // Return the TaskForm view with a blank TaskItem (TaskItemId will be 0)
-            return View("TaskForm", new TaskItem());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
-        {
-            var task = _context.TaskItems.Find(id);
-            if (task != null)
+            if (task.TaskItemId == 0) // A new task will have an ID of 0
             {
-                _context.TaskItems.Remove(task);
-                _context.SaveChanges();
+                _repo.AddTask(task);
             }
-
-            // Redirect back to the Quad page after deletion
+            else // If it has an ID, we are updating an existing task
+            {
+                _repo.UpdateTask(task);
+            }
+            
+            _repo.SaveChanges(); 
             return RedirectToAction("Quad");
         }
+        
+        // If validation fails, reload categories and show the form again
+        ViewBag.Categories = _repo.Categories.OrderBy(c => c.CategoryName).ToList();
+        return View("TaskForm", task);
+    }
 
-        // GET: /Home/Edit/5
-        public IActionResult Edit(int id)
+    // --- INSTANT DELETE TASK (POST) - Bypasses missing view ---
+    [HttpPost]
+    public IActionResult Delete(int id)
+    {
+        var taskToDelete = _repo.GetTaskById(id);
+        if (taskToDelete != null)
         {
-            var task = _context.TaskItems
-                .Include(t => t.Category)
-                .FirstOrDefault(t => t.TaskItemId == id);
-
-            if (task == null)
-                return NotFound();
-
-            // Pass categories for dropdown
-            ViewBag.Categories = _context.Categories.ToList();
-
-            // Return the form view (can be called TaskForm.cshtml)
-            return View("TaskForm", task);
+            _repo.DeleteTask(taskToDelete);
+            _repo.SaveChanges();
         }
+        return RedirectToAction("Quad");
+    }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult SaveTask(TaskItem task)
+    // --- MARK COMPLETED (POST) ---
+    [HttpPost]
+    public IActionResult MarkCompleted(int id)
+    {
+        var task = _repo.GetTaskById(id);
+        if (task != null)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Categories = _context.Categories.ToList();
-                return View("TaskForm", task);
-            }
-
-            if (task.TaskItemId == 0)
-            {
-                // New task (Add) — your teammate will use this part
-                _context.TaskItems.Add(task);
-            }
-            else
-            {
-                // Existing task (Edit)
-                _context.TaskItems.Update(task);
-            }
-
-            _context.SaveChanges();
-            return RedirectToAction("Quad");
+            task.Completed = true;
+            _repo.UpdateTask(task);
+            _repo.SaveChanges();
         }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        return RedirectToAction("Quad");
     }
 }

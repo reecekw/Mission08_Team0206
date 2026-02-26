@@ -5,108 +5,104 @@
     ViewData["Title"] = Model.TaskItemId == 0 ? "Add Task" : "Edit Task";
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
 
-<!-- Task Add/Edit Form - Posts to SaveTask action -->
-<form asp-action="SaveTask" method="post">
+    <form asp-action="SaveTask" method="post" class="shadow-sm p-4 rounded bg-light">
 
-    <!-- Hidden fields to preserve TaskItemId and Completed status during form submission -->
-    <input type="hidden" asp-for="TaskItemId" />
-    <input type="hidden" asp-for="Completed" />
+        <input type="hidden" asp-for="TaskItemId" />
 
-    <!-- Bootstrap grid layout for the form fields -->
-    <div class="row">
+        <div class="row">
 
-        <!-- Left column: Task Description and Due Date -->
-        <div class="col-md-6">
+            <div class="col-md-6">
 
-            <!-- Task Description input (required) -->
-            <div class="mb-3">
-                <label asp-for="TaskDescription" class="form-label"></label>
-                <input asp-for="TaskDescription" class="form-control"
-                       placeholder="Enter task description" />
-                <span asp-validation-for="TaskDescription" class="text-danger"></span>
+                <div class="mb-3">
+                    <label asp-for="TaskDescription" class="form-label fw-bold"></label>
+                    <input asp-for="TaskDescription" class="form-control"
+                           placeholder="Enter task description" />
+                    <span asp-validation-for="TaskDescription" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DueDate" class="form-label fw-bold"></label>
+                    <input asp-for="DueDate" type="date" class="form-control" />
+                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-check mb-3 mt-4">
+                    <input asp-for="Completed" class="form-check-input" type="checkbox" id="completedCheck" />
+                    <label class="form-check-label fw-bold" for="completedCheck">
+                        Mark as Completed
+                    </label>
+                </div>
+
             </div>
 
-            <!-- Due Date input (optional) -->
-            <div class="mb-3">
-                <label asp-for="DueDate" class="form-label"></label>
-                <input asp-for="DueDate" type="date" class="form-control" />
-                <span asp-validation-for="DueDate" class="text-danger"></span>
+            <div class="col-md-6">
+
+                <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label fw-bold"></label>
+                    <select asp-for="CategoryId" class="form-select">
+                        <option value="">-- Select a Category --</option>
+                        @foreach (var cat in (List<Category>)ViewBag.Categories)
+                        {
+                            <option value="@cat.CategoryId">@cat.CategoryName</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Quadrant" class="form-label fw-bold"></label>
+                    <span asp-validation-for="Quadrant" class="text-danger"></span>
+
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="radio" asp-for="Quadrant"
+                               value="1" id="quad1" />
+                        <label class="form-check-label" for="quad1">
+                            Quadrant 1 – Important / Urgent
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" asp-for="Quadrant"
+                               value="2" id="quad2" />
+                        <label class="form-check-label" for="quad2">
+                            Quadrant 2 – Important / Not Urgent
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" asp-for="Quadrant"
+                               value="3" id="quad3" />
+                        <label class="form-check-label" for="quad3">
+                            Quadrant 3 – Not Important / Urgent
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" asp-for="Quadrant"
+                               value="4" id="quad4" />
+                        <label class="form-check-label" for="quad4">
+                            Quadrant 4 – Not Important / Not Urgent
+                        </label>
+                    </div>
+                </div>
+
             </div>
 
         </div>
 
-        <!-- Right column: Category dropdown and Quadrant radio buttons -->
-        <div class="col-md-6">
-
-            <!-- Category dropdown populated from database (rubric requirement) -->
-            <div class="mb-3">
-                <label asp-for="CategoryId" class="form-label"></label>
-                <select asp-for="CategoryId" class="form-select">
-                    <option value="">-- Select a Category --</option>
-                    @foreach (var cat in (List<Category>)ViewBag.Categories)
-                    {
-                        <option value="@cat.CategoryId">@cat.CategoryName</option>
-                    }
-                </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
+        <div class="row mt-4">
+            <div class="col">
+                <button type="submit" class="btn btn-primary px-4 shadow-sm">Save Task</button>
+                <a asp-action="Quad" class="btn btn-secondary ms-2 shadow-sm">Cancel</a>
             </div>
-
-            <!-- Quadrant selection using radio buttons (required) -->
-            <div class="mb-3">
-                <label asp-for="Quadrant" class="form-label"></label>
-                <span asp-validation-for="Quadrant" class="text-danger"></span>
-
-                <!-- Radio button for each of the four quadrants -->
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" asp-for="Quadrant"
-                           value="1" id="quad1" />
-                    <label class="form-check-label" for="quad1">
-                        Quadrant 1 – Important / Urgent
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" asp-for="Quadrant"
-                           value="2" id="quad2" />
-                    <label class="form-check-label" for="quad2">
-                        Quadrant 2 – Important / Not Urgent
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" asp-for="Quadrant"
-                           value="3" id="quad3" />
-                    <label class="form-check-label" for="quad3">
-                        Quadrant 3 – Not Important / Urgent
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" asp-for="Quadrant"
-                           value="4" id="quad4" />
-                    <label class="form-check-label" for="quad4">
-                        Quadrant 4 – Not Important / Not Urgent
-                    </label>
-                </div>
-            </div>
-
         </div>
 
-    </div>
+    </form>
+</div>
 
-    <!-- Submit and Cancel buttons -->
-    <div class="row mt-3">
-        <div class="col">
-            <button type="submit" class="btn btn-primary">Save Task</button>
-            <a asp-action="Quad" class="btn btn-secondary ms-2">Cancel</a>
-        </div>
-    </div>
-
-</form>
-
-<!-- Include client-side validation scripts for form validation -->
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

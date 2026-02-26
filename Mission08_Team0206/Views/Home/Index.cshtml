@@ -1,15 +1,70 @@
-﻿@{
+﻿@model List<TaskItem>
+@{
     ViewData["Title"] = "Home";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8 text-center mt-5">
-        <h1 class="display-4 mb-4">Task Organizer</h1>
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 text-center">
+            <h1 class="display-4 mb-3 fw-bold">Task Organizer</h1>
+            <p class="lead">
+                This application helps you organize and prioritize your tasks
+                using the principles from <em>The 7 Habits of Highly Effective People</em>.
+            </p>
+            <hr class="my-4" />
+            <p>
+                Stop managing time and start managing focus. Use our Quadrants Matrix to divide your tasks into four crucial categories: 
+                <strong>Important & Urgent</strong>, <strong>Important & Not Urgent</strong>, 
+                <strong>Not Important & Urgent</strong>, and <strong>Not Important & Not Urgent</strong>.
+            </p>
+            <a class="btn btn-primary btn-lg mt-3 shadow-sm" asp-controller="Home" asp-action="Quad">Go to your Matrix</a>
+        </div>
+    </div>
 
-        <p class="lead">
-            This application helps you organize and prioritize your tasks
-            using the principles from <em>The 7 Habits of Highly Effective People</em>.
-        </p>
+    <div class="row mt-5 pt-4">
+        <div class="col-12">
+            <h2 class="text-center mb-4">🏆 Completed Tasks Vault</h2>
+            
+            @if (Model != null && Model.Count > 0)
+            {
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-striped table-hover table-bordered mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Task Description</th>
+                                <th>Category</th>
+                                <th>Original Quadrant</th>
+                                <th>Due Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var task in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold text-success">
+                                        <del>@task.TaskDescription</del>
+                                    </td>
+                                    <td>@(task.Category?.CategoryName ?? "None")</td>
+                                    <td>Quadrant @task.Quadrant</td>
+                                    <td>@(task.DueDate?.ToString("MM/dd/yyyy") ?? "No Due Date")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-secondary text-center shadow-sm" role="alert">
+                    <em>You don't have any completed tasks yet. Head over to the matrix and start getting things done!</em>
+                </div>
+            }
+        </div>
+    </div>
 
+    <div class="row mt-5">
+        <div class="col-12 text-center text-muted pt-5">
+            <small>Mission 8 for Section 2 Group 6 for Professor Hilton's IS 413</small>
+        </div>
     </div>
 </div>
